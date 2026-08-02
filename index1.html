@@ -17,10 +17,10 @@
 
         button {
             width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            border: none;
-            background: #ff6b6b;
+            height: 120px;
+            border-radius: 60% 40% 40% 60% / 50% 50% 50% 50%;
+            border: 2px solid #8B4513;
+            background: rgba(139, 69, 19, 0.3);
             color: white;
             font-size: 24px;
             font-weight: bold;
@@ -37,9 +37,262 @@
         button:active {
             transform: scale(0.95);
         }
+
+        @media (max-width: 768px) {
+            button {
+                width: 150px;
+                height: 90px;
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            button {
+                width: 120px;
+                height: 72px;
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .piece {
+                width: 30px !important;
+                height: 30px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .piece {
+                width: 25px !important;
+                height: 25px !important;
+            }
+        }
+
+        .floating-button {
+            position: fixed;
+            width: 100px;
+            height: 60px;
+            border-radius: 60% 40% 40% 60% / 50% 50% 50% 50%;
+            border: none;
+            background: #8B4513;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            z-index: 10;
+            animation: float 10s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+            50% {
+                transform: translateY(0) rotate(0deg);
+            }
+            75% {
+                transform: translateY(20px) rotate(-5deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .floating-button {
+                width: 80px;
+                height: 48px;
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .floating-button {
+                width: 60px;
+                height: 36px;
+                font-size: 8px;
+            }
+        }
+
+        .progress-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            display: none;
+            z-index: 1000;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            background-size: 200% 100%;
+            animation: rainbow 3s linear infinite;
+            transition: width 0.3s ease;
+        }
+
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
     </style>
 </head>
 <body>
-    <button>cục cứt</button>
+    <button id="mainButton" onclick="breakButton(this)">cục cứt</button>
+
+    <div class="progress-container" id="progressContainer">
+        <div class="progress-bar" id="progressBar"></div>
+        <div class="progress-text" id="progressText">0/20</div>
+    </div>
+
+    <script>
+        // Biến đếm số nút nhỏ đã vỡ
+        let brokenCount = 0;
+        const targetCount = 20;
+
+        // Tạo nút trôi nổi
+        function createFloatingButton() {
+            const btn = document.createElement('button');
+            btn.className = 'floating-button';
+            btn.textContent = 'cục cứt';
+            btn.onclick = function() { breakButton(this); };
+            
+            // Vị trí ngẫu nhiên
+            const x = Math.random() * (window.innerWidth - 100);
+            const y = Math.random() * (window.innerHeight - 60);
+            btn.style.left = x + 'px';
+            btn.style.top = y + 'px';
+            
+            // Animation delay ngẫu nhiên
+            btn.style.animationDelay = (Math.random() * 5) + 's';
+            
+            document.body.appendChild(btn);
+            
+            // Tự động xóa sau thời gian ngẫu nhiên
+            const lifetime = 5000 + Math.random() * 10000;
+            setTimeout(() => {
+                if (btn.parentNode) {
+                    btn.remove();
+                }
+            }, lifetime);
+        }
+        
+        // Tạo 10 nút ban đầu
+        for (let i = 0; i < 10; i++) {
+            createFloatingButton();
+        }
+        
+        // Tạo nút mới mỗi 0.5 giây
+        setInterval(createFloatingButton, 500);
+
+        function breakButton(btn) {
+            // Kiểm tra nếu là nút trôi nổi thì tăng đếm
+            if (btn.classList.contains('floating-button')) {
+                brokenCount++;
+                updateProgress();
+            }
+            
+            // Tạo hiệu ứng vỡ
+            const rect = btn.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            // Ẩn nút gốc
+            btn.style.display = 'none';
+            
+            // Tạo các mảnh vỡ
+            for (let i = 0; i < 20; i++) {
+                const piece = document.createElement('div');
+                piece.style.position = 'fixed';
+                piece.style.width = '40px';
+                piece.style.height = '40px';
+                piece.style.background = '#8B4513';
+                piece.style.left = centerX + 'px';
+                piece.style.top = centerY + 'px';
+                piece.style.borderRadius = '5px';
+                piece.classList.add('piece');
+                piece.style.pointerEvents = 'none';
+                piece.style.transition = 'all 0.5s ease-out';
+                
+                document.body.appendChild(piece);
+                
+                // Random direction
+                const angle = (Math.random() * 360) * (Math.PI / 180);
+                const distance = 100 + Math.random() * 200;
+                const endX = centerX + Math.cos(angle) * distance;
+                const endY = centerY + Math.sin(angle) * distance;
+                
+                setTimeout(() => {
+                    piece.style.left = endX + 'px';
+                    piece.style.top = endY + 'px';
+                    piece.style.opacity = '0';
+                    piece.style.transform = 'rotate(' + (Math.random() * 720) + 'deg)';
+                }, 10);
+                
+                // Xóa mảnh sau animation
+                setTimeout(() => {
+                    piece.remove();
+                }, 600);
+            }
+            
+            // Hiện lại nút sau 1 giây (chỉ với nút chính)
+            if (!btn.classList.contains('floating-button')) {
+                setTimeout(() => {
+                    btn.style.display = 'block';
+                }, 1000);
+            }
+        }
+
+        function updateProgress() {
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const mainButton = document.getElementById('mainButton');
+            
+            // Hiện progress bar khi bắt đầu đếm
+            progressContainer.style.display = 'block';
+            
+            // Cập nhật width
+            const percentage = (brokenCount / targetCount) * 100;
+            progressBar.style.width = percentage + '%';
+            
+            // Cập nhật text
+            progressText.textContent = brokenCount + '/' + targetCount;
+            
+            // Cập nhật màu nút chính theo tiến độ (đầy theo %)
+            mainButton.style.background = `linear-gradient(90deg, 
+                rgba(139, 69, 19, 0.8) ${percentage}%, 
+                rgba(139, 69, 19, 0.3) ${percentage}%)`;
+            
+            // Khi đạt 20
+            if (brokenCount >= targetCount) {
+                progressText.textContent = 'HOÀN THÀNH!';
+                progressText.style.color = '#00ff00';
+                mainButton.style.background = 'linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3)';
+                mainButton.style.backgroundSize = '200% 100%';
+                mainButton.style.animation = 'rainbow 3s linear infinite';
+            }
+        }
+    </script>
 </body>
 </html>
