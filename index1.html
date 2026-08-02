@@ -155,6 +155,35 @@
             font-size: 14px;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
+
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #00ff00;
+            color: #ff0000;
+            padding: 40px 60px;
+            border-radius: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
     </style>
 </head>
 <body>
@@ -164,6 +193,8 @@
         <div class="progress-bar" id="progressBar"></div>
         <div class="progress-text" id="progressText">0/20</div>
     </div>
+
+    <div class="message-box" id="messageBox">chúc mừng bạn đã ăn đủ 20 cục cứt</div>
 
     <script>
         // Biến đếm số nút nhỏ đã vỡ
@@ -206,6 +237,11 @@
         setInterval(createFloatingButton, 500);
 
         function breakButton(btn) {
+            // Kiểm tra nếu là nút chính và chưa đầy thì không vỡ
+            if (!btn.classList.contains('floating-button') && brokenCount < targetCount) {
+                return;
+            }
+            
             // Kiểm tra nếu là nút trôi nổi thì tăng đếm
             if (btn.classList.contains('floating-button')) {
                 brokenCount++;
@@ -217,28 +253,61 @@
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
             
+            // Kiểm tra nếu là nút chính thì dùng hiệu ứng bùng nổ mạnh hơn
+            const isMainButton = !btn.classList.contains('floating-button');
+            const pieceCount = isMainButton ? 100 : 20;
+            const pieceSize = isMainButton ? 60 : 40;
+            const minDistance = isMainButton ? 300 : 100;
+            const maxDistance = isMainButton ? 600 : 300;
+            const animationDuration = isMainButton ? 1.0 : 0.5;
+            const rotationRange = isMainButton ? 1440 : 720;
+            
             // Ẩn nút gốc
             btn.style.display = 'none';
             
+            // Thêm hiệu ứng flash nếu là nút chính
+            if (isMainButton) {
+                const flash = document.createElement('div');
+                flash.style.position = 'fixed';
+                flash.style.left = '0';
+                flash.style.top = '0';
+                flash.style.width = '100vw';
+                flash.style.height = '100vh';
+                flash.style.background = 'white';
+                flash.style.opacity = '0.8';
+                flash.style.zIndex = '3000';
+                flash.style.pointerEvents = 'none';
+                flash.style.transition = 'opacity 0.2s ease-out';
+                document.body.appendChild(flash);
+                
+                setTimeout(() => {
+                    flash.style.opacity = '0';
+                }, 50);
+                
+                setTimeout(() => {
+                    flash.remove();
+                }, 250);
+            }
+            
             // Tạo các mảnh vỡ
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < pieceCount; i++) {
                 const piece = document.createElement('div');
                 piece.style.position = 'fixed';
-                piece.style.width = '40px';
-                piece.style.height = '40px';
+                piece.style.width = pieceSize + 'px';
+                piece.style.height = pieceSize + 'px';
                 piece.style.background = '#8B4513';
                 piece.style.left = centerX + 'px';
                 piece.style.top = centerY + 'px';
                 piece.style.borderRadius = '5px';
                 piece.classList.add('piece');
                 piece.style.pointerEvents = 'none';
-                piece.style.transition = 'all 0.5s ease-out';
+                piece.style.transition = 'all ' + animationDuration + 's ease-out';
                 
                 document.body.appendChild(piece);
                 
                 // Random direction
                 const angle = (Math.random() * 360) * (Math.PI / 180);
-                const distance = 100 + Math.random() * 200;
+                const distance = minDistance + Math.random() * (maxDistance - minDistance);
                 const endX = centerX + Math.cos(angle) * distance;
                 const endY = centerY + Math.sin(angle) * distance;
                 
@@ -246,20 +315,13 @@
                     piece.style.left = endX + 'px';
                     piece.style.top = endY + 'px';
                     piece.style.opacity = '0';
-                    piece.style.transform = 'rotate(' + (Math.random() * 720) + 'deg)';
+                    piece.style.transform = 'rotate(' + (Math.random() * rotationRange) + 'deg)';
                 }, 10);
                 
                 // Xóa mảnh sau animation
                 setTimeout(() => {
                     piece.remove();
-                }, 600);
-            }
-            
-            // Hiện lại nút sau 1 giây (chỉ với nút chính)
-            if (!btn.classList.contains('floating-button')) {
-                setTimeout(() => {
-                    btn.style.display = 'block';
-                }, 1000);
+                }, animationDuration * 1000 + 100);
             }
         }
 
@@ -269,8 +331,8 @@
             const progressText = document.getElementById('progressText');
             const mainButton = document.getElementById('mainButton');
             
-            // Hiện progress bar khi bắt đầu đếm
-            progressContainer.style.display = 'block';
+            // Ẩn progress bar
+            progressContainer.style.display = 'none';
             
             // Cập nhật width
             const percentage = (brokenCount / targetCount) * 100;
@@ -291,6 +353,16 @@
                 mainButton.style.background = 'linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3)';
                 mainButton.style.backgroundSize = '200% 100%';
                 mainButton.style.animation = 'rainbow 3s linear infinite';
+                
+                // Tự động vỡ nút chính sau 0.5s
+                setTimeout(() => {
+                    breakButton(mainButton);
+                    // Hiện message box sau khi vỡ
+                    setTimeout(() => {
+                        const messageBox = document.getElementById('messageBox');
+                        messageBox.style.display = 'block';
+                    }, 600);
+                }, 500);
             }
         }
     </script>
