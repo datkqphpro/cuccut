@@ -87,6 +87,7 @@
                     <tr>
                         <th>STT</th>
                         <th>Địa điểm</th>
+                        <th>Ghi chú</th>
                         <th>Thời gian</th>
                     </tr>
                 </thead>
@@ -94,52 +95,62 @@
                     <tr>
                         <td>1</td>
                         <td><input type="text" name="diadiem1" placeholder="Nhập địa điểm"></td>
-                        <td><input type="time" name="thoigian1"></td>
+                        <td><input type="text" name="ghichu1" placeholder="Ghi chú"></td>
+                        <td><input type="datetime-local" name="thoigian1"></td>
                     </tr>
                     <tr>
                         <td>2</td>
                         <td><input type="text" name="diadiem2" placeholder="Nhập địa điểm"></td>
-                        <td><input type="time" name="thoigian2"></td>
+                        <td><input type="text" name="ghichu2" placeholder="Ghi chú"></td>
+                        <td><input type="datetime-local" name="thoigian2"></td>
                     </tr>
                     <tr>
                         <td>3</td>
                         <td><input type="text" name="diadiem3" placeholder="Nhập địa điểm"></td>
-                        <td><input type="time" name="thoigian3"></td>
+                        <td><input type="text" name="ghichu3" placeholder="Ghi chú"></td>
+                        <td><input type="datetime-local" name="thoigian3"></td>
                     </tr>
                     <tr>
                         <td>4</td>
                         <td><input type="text" name="diadiem4" placeholder="Nhập địa điểm"></td>
-                        <td><input type="time" name="thoigian4"></td>
+                        <td><input type="text" name="ghichu4" placeholder="Ghi chú"></td>
+                        <td><input type="datetime-local" name="thoigian4"></td>
                     </tr>
                     <tr>
                         <td>5</td>
                         <td><input type="text" name="diadiem5" placeholder="Nhập địa điểm"></td>
-                        <td><input type="time" name="thoigian5"></td>
+                        <td><input type="text" name="ghichu5" placeholder="Ghi chú"></td>
+                        <td><input type="datetime-local" name="thoigian5"></td>
                     </tr>
                     <tr>
                         <td>6</td>
                         <td><input type="text" name="diadiem6" placeholder="Nhập địa điểm"></td>
-                        <td><input type="time" name="thoigian6"></td>
+                        <td><input type="text" name="ghichu6" placeholder="Ghi chú"></td>
+                        <td><input type="datetime-local" name="thoigian6"></td>
                     </tr>
                     <tr>
                         <td>7</td>
                         <td><input type="text" name="diadiem7" placeholder="Nhập địa điểm"></td>
-                        <td><input type="time" name="thoigian7"></td>
+                        <td><input type="text" name="ghichu7" placeholder="Ghi chú"></td>
+                        <td><input type="datetime-local" name="thoigian7"></td>
                     </tr>
                     <tr>
                         <td>8</td>
                         <td><input type="text" name="diadiem8" placeholder="Nhập địa điểm"></td>
-                        <td><input type="time" name="thoigian8"></td>
+                        <td><input type="text" name="ghichu8" placeholder="Ghi chú"></td>
+                        <td><input type="datetime-local" name="thoigian8"></td>
                     </tr>
                     <tr>
                         <td>9</td>
                         <td><input type="text" name="diadiem9" placeholder="Nhập địa điểm"></td>
-                        <td><input type="time" name="thoigian9"></td>
+                        <td><input type="text" name="ghichu9" placeholder="Ghi chú"></td>
+                        <td><input type="datetime-local" name="thoigian9"></td>
                     </tr>
                     <tr>
                         <td>10</td>
                         <td><input type="text" name="diadiem10" placeholder="Nhập địa điểm"></td>
-                        <td><input type="time" name="thoigian10"></td>
+                        <td><input type="text" name="ghichu10" placeholder="Ghi chú"></td>
+                        <td><input type="datetime-local" name="thoigian10"></td>
                     </tr>
                 </tbody>
             </table>
@@ -161,12 +172,14 @@
             // Gửi từng dòng dữ liệu
             for (let i = 1; i <= 10; i++) {
                 const diadiem = formData.get('diadiem' + i);
+                const ghichu = formData.get('ghichu' + i);
                 const thoigian = formData.get('thoigian' + i);
                 
-                if (diadiem || thoigian) {
+                if (diadiem || ghichu || thoigian) {
                     const data = {
                         stt: i,
                         diadiem: diadiem || '',
+                        ghichu: ghichu || '',
                         thoigian: thoigian || ''
                     };
                     
@@ -187,7 +200,7 @@
             
             submitBtn.disabled = false;
             submitBtn.textContent = 'Gửi thông tin';
-            alert('Thông tin đã được gửi thành công vào Google Sheets!');
+            alert('Thông tin đã được gửi thành công cho anh yêu');
             this.reset();
         });
     </script>
