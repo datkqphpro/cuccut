@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Điền thông tin</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Điền thông tin</h1>
+        <form id="infoForm">
+            <table>
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Địa điểm</th>
+                        <th>Thời gian</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><input type="text" name="diadiem1" placeholder="Nhập địa điểm"></td>
+                        <td><input type="time" name="thoigian1"></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><input type="text" name="diadiem2" placeholder="Nhập địa điểm"></td>
+                        <td><input type="time" name="thoigian2"></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><input type="text" name="diadiem3" placeholder="Nhập địa điểm"></td>
+                        <td><input type="time" name="thoigian3"></td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td><input type="text" name="diadiem4" placeholder="Nhập địa điểm"></td>
+                        <td><input type="time" name="thoigian4"></td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td><input type="text" name="diadiem5" placeholder="Nhập địa điểm"></td>
+                        <td><input type="time" name="thoigian5"></td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td><input type="text" name="diadiem6" placeholder="Nhập địa điểm"></td>
+                        <td><input type="time" name="thoigian6"></td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td><input type="text" name="diadiem7" placeholder="Nhập địa điểm"></td>
+                        <td><input type="time" name="thoigian7"></td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td><input type="text" name="diadiem8" placeholder="Nhập địa điểm"></td>
+                        <td><input type="time" name="thoigian8"></td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td><input type="text" name="diadiem9" placeholder="Nhập địa điểm"></td>
+                        <td><input type="time" name="thoigian9"></td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td><input type="text" name="diadiem10" placeholder="Nhập địa điểm"></td>
+                        <td><input type="time" name="thoigian10"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="submit" class="submit-btn">Gửi thông tin</button>
+        </form>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby-8rp_OpNV2BK_0tTFQQ1ru04cOgAJ90ahWY2H3J4iYxCIInaH1esX4nyoMxinKq3G/exec';
+
+        document.getElementById('infoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitBtn = document.querySelector('.submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Đang gửi...';
+            
+            // Gửi từng dòng dữ liệu
+            for (let i = 1; i <= 10; i++) {
+                const diadiem = formData.get('diadiem' + i);
+                const thoigian = formData.get('thoigian' + i);
+                
+                if (diadiem || thoigian) {
+                    const data = {
+                        stt: i,
+                        diadiem: diadiem || '',
+                        thoigian: thoigian || ''
+                    };
+                    
+                    try {
+                        await fetch(SCRIPT_URL, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(data)
+                        });
+                    } catch (error) {
+                        console.error('Lỗi gửi dòng', i, error);
+                    }
+                }
+            }
+            
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Gửi thông tin';
+            alert('Thông tin đã được gửi thành công vào Google Sheets!');
+            this.reset();
+        });
+    </script>
+</body>
+</html>
